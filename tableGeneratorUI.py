@@ -35,14 +35,14 @@ class TableGenerator:
                 default_value=self.type,
             )
 
-            dpg.add_spacing(count=2)
+            dpg.add_spacer(count=2)
             self.sizeTableInput = dpg.add_combo(
                 label="Tamaño de la tabla",
                 items=("4x4", "5x5", "6x6", "7x7", "8x8", "9x9", "10x10"),
                 default_value=self.size,
                 width=100,
             )
-            dpg.add_spacing(count=2)
+            dpg.add_spacer(count=2)
             self.widthTablePdfInput = dpg.add_combo(
                 label="Tamaño de impresión",
                 items=(
@@ -57,7 +57,7 @@ class TableGenerator:
                 width=140,
             )
 
-            dpg.add_spacing(count=2)
+            dpg.add_spacer(count=2)
             self.qtyTableInput = dpg.add_input_int(
                 label="Cantidad de tablas",
                 default_value=self.qty,
@@ -66,7 +66,7 @@ class TableGenerator:
                 width=100,
             )
 
-            dpg.add_spacing(count=2)
+            dpg.add_spacer(count=2)
             self.comodinInput = dpg.add_input_int(
                 label="Comodin",
                 default_value=self.comodin,
@@ -76,13 +76,13 @@ class TableGenerator:
                 width=100,
             )
 
-            dpg.add_spacing(count=2)
+            dpg.add_spacer(count=2)
             self.label1 = dpg.add_text("¿Doble comodin?")
             self.doubleComodin = dpg.add_radio_button(
                 items=("No", "Si"), horizontal=True, default_value="No"
             )
 
-            dpg.add_spacing(count=2)
+            dpg.add_spacer(count=2)
             self.saveButton = dpg.add_button(
                 label="Generar", callback=self.handleGenerate, tag="saveButton"
             )
@@ -97,7 +97,7 @@ class TableGenerator:
                 tag="generateComodinMiddle",
             )
 
-            dpg.add_spacing(count=4)
+            dpg.add_spacer(count=4)
             self.progressBar = dpg.add_progress_bar(
                 label="Progreso", default_value=self.progress, width=self.width
             )
