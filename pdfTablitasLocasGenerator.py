@@ -1,7 +1,10 @@
+from fileinput import filename
 from fpdf import FPDF
 import os
 import json
 import sys
+
+from lib.file import get_file_path
 
 
 class PDFGenerator:
@@ -39,8 +42,8 @@ class PDFGenerator:
             iterates += 1
 
         
-            
-        self.pdf.output(self.filename + ".pdf")
+        outputDir = get_file_path("tablas/_PDF", self.filename+".pdf")
+        self.pdf.output(outputDir)
 
 
 if __name__ == "__main__":

@@ -1,5 +1,7 @@
+from xml.etree.ElementTree import tostring
 import dearpygui.dearpygui as dpg
 import generator
+from lib.file import get_file_path
 from pdfGeneratorUI import PdfGenerator as pdfGen
 import os
 from PIL import Image, ImageDraw, ImageFont
@@ -23,6 +25,7 @@ class TableGenerator:
         self.specificPosition = "No"
         self.mode = 0
         self.pdfSizeTable = (0, 0)
+        self.outputDir = ""
         with dpg.window(
             label="Generador de tablas",
             width=self.width,
@@ -35,14 +38,14 @@ class TableGenerator:
                 default_value=self.type,
             )
 
-            dpg.add_spacer(count=2)
+            dpg.add_spacing(count=2)
             self.sizeTableInput = dpg.add_combo(
                 label="Tamaño de la tabla",
                 items=("4x4", "5x5", "6x6", "7x7", "8x8", "9x9", "10x10"),
                 default_value=self.size,
                 width=100,
             )
-            dpg.add_spacer(count=2)
+            dpg.add_spacing(count=2)
             self.widthTablePdfInput = dpg.add_combo(
                 label="Tamaño de impresión",
                 items=(
@@ -50,6 +53,8 @@ class TableGenerator:
                     "7.3, 11.3",
                     "5.4, 9.4",
                     "4.2, 7.2",
+                    "7, 10",
+                    "5, 8",
                     "3.4, 5.4",
                     "2.8, 4.8",
                 ),
@@ -57,7 +62,7 @@ class TableGenerator:
                 width=140,
             )
 
-            dpg.add_spacer(count=2)
+            dpg.add_spacing(count=2)
             self.qtyTableInput = dpg.add_input_int(
                 label="Cantidad de tablas",
                 default_value=self.qty,
@@ -66,7 +71,7 @@ class TableGenerator:
                 width=100,
             )
 
-            dpg.add_spacer(count=2)
+            dpg.add_spacing(count=2)
             self.comodinInput = dpg.add_input_int(
                 label="Comodin",
                 default_value=self.comodin,
@@ -76,13 +81,13 @@ class TableGenerator:
                 width=100,
             )
 
-            dpg.add_spacer(count=2)
+            dpg.add_spacing(count=2)
             self.label1 = dpg.add_text("¿Doble comodin?")
             self.doubleComodin = dpg.add_radio_button(
                 items=("No", "Si"), horizontal=True, default_value="No"
             )
 
-            dpg.add_spacer(count=2)
+            dpg.add_spacing(count=2)
             self.saveButton = dpg.add_button(
                 label="Generar", callback=self.handleGenerate, tag="saveButton"
             )
@@ -97,7 +102,7 @@ class TableGenerator:
                 tag="generateComodinMiddle",
             )
 
-            dpg.add_spacer(count=4)
+            dpg.add_spacing(count=4)
             self.progressBar = dpg.add_progress_bar(
                 label="Progreso", default_value=self.progress, width=self.width
             )
@@ -137,7 +142,7 @@ class TableGenerator:
         w = float(dpg.get_value(self.widthTablePdfInput).strip().split(",")[0])
         h = float(dpg.get_value(self.widthTablePdfInput).strip().split(",")[1])
         fileName = input("***/ Nombre del archivo: ")
-        pdf = pdfGen(filename=str(fileName).strip(), size=(w, h))
+        pdf = pdfGen(filename=str(fileName).strip(), size=(w, h), folder=self.outputDir)
         pdf.generate()
 
     def generateAutomatic(self):
@@ -151,9 +156,9 @@ class TableGenerator:
         self.progress = 0.0
         step = 1 / self.qty
 
-        folder_exists = os.path.exists("tables")
+        folder_exists = os.path.exists("tablas")
         if not folder_exists:
-            os.mkdir("tables")
+            os.mkdir("tablas")
         if folder_exists:
             size = self.size.split("x")
             num_filas = int(size[0])
@@ -168,7 +173,10 @@ class TableGenerator:
                 (255, 255, 255),
             )
             print("Generando tablas...")
-            for tabla in self.generator.tables:
+            self.outputDir = get_file_path("tablas")
+            print(self.outputDir)
+            for tabla in self.generator.tablas:
+                print("TABLA:   "+str(tabla)+"\n *********************")
                 print(self.progress)
                 self.progress += step
                 print(tabla)
@@ -191,17 +199,23 @@ class TableGenerator:
                             imagen,
                             (j * int(w / num_columnas), i * int(h / num_filas)),
                         )
-                num = len(os.listdir("tables"))
-                print(num)
-                local_image.save(
-                    f"tables/tabla{num}_{num_filas}x{num_columnas}.jpg",
+
+                outFolder = os.path.exists(self.outputDir)
+                if outFolder:
+                    num = len(os.listdir(self.outputDir))
+                else:
+                    num = 0
+                
+                local_image.save(self.outputDir+f'/tabla{num}_{num_filas}x{num_columnas}.jpg',
                     quality=95,
                     optimize=True,
                     dpi=(96, 96),
                 )
+                print(self.outputDir+f'/tabla{num}_{num_filas}x{num_columnas}.jpg'+ "  guardado.....")
+                
                 print(f"Progress{self.progressBar}. Value: {self.progress}")
                 dpg.set_value(self.progressBar, self.progress)
-            # with open(f"tables/{self.qty}x{self.size}.txt", "w") as file:
+            # with open(f"tablas/{self.qty}x{self.size}.txt", "w") as file:
             #     file.write(str(self.generador))
             # Contar cuantas tablas hay en la carpeta
         self.progress = "completado"

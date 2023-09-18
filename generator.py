@@ -11,27 +11,22 @@ class Generator:
         self.comodin = comodin
         self.double = double
         self.specificPosition = specificPosition
-        self.tables = []
-        self.generateTables()
+        self.tablas = []
+        self.generateTablas()
 
         ########### PRINT TABLES ############
         self.x = PrettyTable()
-        for row in self.tables:
+        for row in self.tablas:
             self.x.add_row(row)
 
-    def generateTables(self):
+    def generateTablas(self):
         size = self.size.split("x")
 
-        # for i in range(self.qty):
-        #     table = []
-        #     for j in range(int(size[0])):
-        #         table.append(np.random.randint(1, 54, size=int(size[1])))
-        #     self.tables.append(table)
         num_rows = int(size[0])
         num_cols = int(size[1])
         # "4x4"
         # [4,4]
-
+        print(self.qty)
         for _ in range(self.qty):
             a = np.arange(1, 54 + 1)
             if self.double == "Si":
@@ -95,9 +90,10 @@ class Generator:
                     ## COMODIN EN EL CENTRO ##
                     tabla[int(num_rows/2), int(num_cols/2)] = self.comodin
 
-            self.tables.append(tabla)
+            self.tablas.append(tabla)
             if self.debug:
                 self.verifyTable(tabla)
+        print(self.tablas)
 
     def verifyTable(self, table):
         print("####### Verify Table ########")
