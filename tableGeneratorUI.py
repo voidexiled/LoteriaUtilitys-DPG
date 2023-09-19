@@ -55,6 +55,7 @@ class TableGenerator:
                     "4.2, 7.2",
                     "7, 10",
                     "5, 8",
+                    "6.5, 9",
                     "3.4, 5.4",
                     "2.8, 4.8",
                 ),
@@ -173,10 +174,10 @@ class TableGenerator:
                 (255, 255, 255),
             )
             print("Generando tablas...")
-            self.outputDir = get_file_path("tablas")
+            self.outputDir = get_file_path()
             print(self.outputDir)
             for tabla in self.generator.tablas:
-                print("TABLA:   "+str(tabla)+"\n *********************")
+                print("TABLA:   " + str(tabla) + "\n *********************")
                 print(self.progress)
                 self.progress += step
                 print(tabla)
@@ -205,14 +206,19 @@ class TableGenerator:
                     num = len(os.listdir(self.outputDir))
                 else:
                     num = 0
-                
-                local_image.save(self.outputDir+f'/tabla{num}_{num_filas}x{num_columnas}.jpg',
+
+                local_image.save(
+                    self.outputDir + f"/tabla{num}_{num_filas}x{num_columnas}.jpg",
                     quality=95,
                     optimize=True,
                     dpi=(96, 96),
                 )
-                print(self.outputDir+f'/tabla{num}_{num_filas}x{num_columnas}.jpg'+ "  guardado.....")
-                
+                print(
+                    self.outputDir
+                    + f"/tabla{num}_{num_filas}x{num_columnas}.jpg"
+                    + "  guardado....."
+                )
+
                 print(f"Progress{self.progressBar}. Value: {self.progress}")
                 dpg.set_value(self.progressBar, self.progress)
             # with open(f"tablas/{self.qty}x{self.size}.txt", "w") as file:
