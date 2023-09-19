@@ -1,29 +1,31 @@
 from fpdf import FPDF
 import os
-from lib.file import get_file_path
+
+# from lib.file import get_file_path
+
 
 class PdfGenerator:
     elementoscontados = 0
     pagcontadas = 0
-    margin_left = 2
+    margin_left = 1
 
     def __init__(self, filename="", size=(5, 7), folder="tablas"):
         self.pdf = FPDF(orientation="P", unit="cm", format="A4")
         self.filename = filename
         self.folder = folder
         self.size = size
-        self.paperSize = (20, 26)
+        self.paperSize = (21, 28)
         self.margin = 0
 
     def generate(self):
-        jpg_files = [file for file in os.listdir(self.folder) if file.endswith('.jpg')] 
+        jpg_files = [file for file in os.listdir(self.folder) if file.endswith(".jpg")]
 
-        img_width, img_height = self.size 
-        effective_paper_width = self.paperSize[0] - self.margin_left 
+        img_width, img_height = self.size
+        effective_paper_width = self.paperSize[0] - self.margin_left
         effective_paper_height = self.paperSize[1] - self.margin_left
-        images_per_row = int(effective_paper_width // img_width) 
+        images_per_row = int(effective_paper_width // img_width)
         images_per_column = int(effective_paper_height // img_height)
-        max_images_per_page = images_per_row * images_per_column 
+        max_images_per_page = images_per_row * images_per_column
         print(max_images_per_page)
 
         for index, tabla in enumerate(jpg_files):
@@ -34,13 +36,24 @@ class PdfGenerator:
             xOffset = self.margin_left + (ind_in_page % images_per_row) * img_width
             yOffset = self.margin_left + (ind_in_page // images_per_row) * img_height
 
-            self.pdf.image(f"{self.folder}/{tabla}", x=xOffset, y=yOffset, w=img_width, h=img_height)
+            self.pdf.image(
+                f"{self.folder}/{tabla}",
+                x=xOffset,
+                y=yOffset,
+                w=img_width,
+                h=img_height,
+            )
 
         if not os.path.exists("tablas/_PDF/"):
             os.mkdir("tablas/_PDF/")
-
         self.pdf.output(f"tablas/_PDF/{self.filename}.pdf")
 
+
 if __name__ == "__main__":
-    pdf = PdfGenerator()
+    filename = str(input("Filename: "))
+    width = float(input("Width: "))
+    height = float(input("Height: "))
+    folderName = str(input("Folder: "))
+    size = (width, height)
+    pdf = PdfGenerator(filename=filename, size=size, folder=folderName)
     pdf.generate()
