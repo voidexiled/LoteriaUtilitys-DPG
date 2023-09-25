@@ -23,6 +23,7 @@ class TableGenerator:
         self.comodin = 0
         self.double = "No"
         self.specificPosition = "No"
+        self.withModel = "No"
         self.mode = 0
         self.pdfSizeTable = (0, 0)
         self.outputDir = ""
@@ -102,11 +103,19 @@ class TableGenerator:
                 callback=self.handleGenerateComodinSpecific,
                 tag="generateComodinMiddle",
             )
-
+            self.generateWithModel = dpg.add_button(
+                label="Generar con modelo pozo1-esquinas2",
+                callback=self.handleGenerateWithModel,
+                tag="generateWithModel",
+            )
             dpg.add_spacing(count=4)
             self.progressBar = dpg.add_progress_bar(
                 label="Progreso", default_value=self.progress, width=self.width
             )
+
+    def handleGenerateWithModel(self):
+        self.mode = 3
+        self.handleGenerate()
 
     def handleGenerateComodinSpecific(self):
         self.mode = 2
@@ -125,7 +134,6 @@ class TableGenerator:
         if self.comodin > 54:
             self.comodin = 54
 
-        print(self.qty, self.size, self.type, self.comodin)
         if self.mode == 0:
             self.generateAutomatic()
         if self.mode == 1:
@@ -139,6 +147,9 @@ class TableGenerator:
         if self.mode == 2:
             self.specificPosition = "Si"
             self.generateAutomatic()
+        if self.mode == 3:
+            self.withModel = "Si"
+            self.generateAutomatic()
 
         w = float(dpg.get_value(self.widthTablePdfInput).strip().split(",")[0])
         h = float(dpg.get_value(self.widthTablePdfInput).strip().split(",")[1])
@@ -148,9 +159,14 @@ class TableGenerator:
 
     def generateAutomatic(self):
         self.generator = generator.Generator(
-            self.qty, self.size, self.comodin, self.double, self.specificPosition
+            self.qty,
+            self.size,
+            self.comodin,
+            self.double,
+            self.specificPosition,
+            self.withModel,
         )
-        # print(self.generador)
+
         with dpg.window(label="Generador", width=300, height=220, pos=[self.width, 0]):
             dpg.add_text(str(self.generator))
         print("Generando...")
@@ -164,8 +180,7 @@ class TableGenerator:
             size = self.size.split("x")
             num_filas = int(size[0])
             num_columnas = int(size[1])
-            # ventana_ancho = num_columnas * self.WIDTH_FIGURE
-            # ventana_alto = num_filas * self.HEIGHT_FIGURE
+
             w, h = 800, 1200
             # w, h = 300, 600
             local_image = Image.new(
@@ -175,12 +190,12 @@ class TableGenerator:
             )
             print("Generando tablas...")
             self.outputDir = get_file_path()
-            print(self.outputDir)
+
             for tabla in self.generator.tablas:
-                print("TABLA:   " + str(tabla) + "\n *********************")
-                print(self.progress)
+                # print("TABLA:   " + str(tabla) + "\n *********************")
+                # print(self.progress)
                 self.progress += step
-                print(tabla)
+                # print(tabla)
                 for i in range(num_filas):
                     for j in range(num_columnas):
                         figura = tabla[i][j]
@@ -219,7 +234,7 @@ class TableGenerator:
                     + "  guardado....."
                 )
 
-                print(f"Progress{self.progressBar}. Value: {self.progress}")
+                # print(f"Progress{self.progressBar}. Value: {self.progress}")
                 dpg.set_value(self.progressBar, self.progress)
             # with open(f"tablas/{self.qty}x{self.size}.txt", "w") as file:
             #     file.write(str(self.generador))

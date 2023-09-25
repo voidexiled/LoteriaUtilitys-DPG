@@ -1,5 +1,6 @@
 from fpdf import FPDF
 import os
+import re
 
 # from lib.file import get_file_path
 
@@ -17,8 +18,15 @@ class PdfGenerator:
         self.paperSize = (21, 28)
         self.margin = 0
 
+    def ordenar_nombre_archivo(self, archivo):
+        # Extraeríamos el número en el nombre del archivo usando una expresión regular
+        numero = int(re.search(r"\d+", archivo).group())
+        return numero
+
     def generate(self):
         jpg_files = [file for file in os.listdir(self.folder) if file.endswith(".jpg")]
+        jpg_files.sort(key=self.ordenar_nombre_archivo)
+        print(jpg_files)
 
         img_width, img_height = self.size
         effective_paper_width = self.paperSize[0] - self.margin_left
