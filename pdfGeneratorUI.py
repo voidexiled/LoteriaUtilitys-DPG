@@ -9,6 +9,7 @@ class PdfGenerator:
     elementoscontados = 0
     pagcontadas = 0
     margin_left = 1
+    margin_top = 0.5
 
     def __init__(self, filename="", size=(5, 7), folder="tablas"):
         self.pdf = FPDF(orientation="P", unit="cm", format="A4")
@@ -30,7 +31,7 @@ class PdfGenerator:
 
         img_width, img_height = self.size
         effective_paper_width = self.paperSize[0] - self.margin_left
-        effective_paper_height = self.paperSize[1] - self.margin_left
+        effective_paper_height = self.paperSize[1] - self.margin_top
         images_per_row = int(effective_paper_width // img_width)
         images_per_column = int(effective_paper_height // img_height)
         max_images_per_page = images_per_row * images_per_column
@@ -42,7 +43,7 @@ class PdfGenerator:
 
             ind_in_page = index % max_images_per_page
             xOffset = self.margin_left + (ind_in_page % images_per_row) * img_width
-            yOffset = self.margin_left + (ind_in_page // images_per_row) * img_height
+            yOffset = self.margin_top + (ind_in_page // images_per_row) * img_height
 
             self.pdf.image(
                 f"{self.folder}/{tabla}",

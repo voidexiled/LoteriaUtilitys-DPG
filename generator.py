@@ -73,11 +73,11 @@ class Generator:
                             if place == 0:
                                 tabla[0, 0] = self.comodin
                             elif place == 1:
-                                tabla[0, num_cols - 1] = self.comodin
+                                tabla[0, 3] = self.comodin
                             elif place == 2:
-                                tabla[num_rows - 1, 0] = self.comodin
+                                tabla[3, 0] = self.comodin
                             elif place == 3:
-                                tabla[num_rows - 1, num_cols - 1] = self.comodin
+                                tabla[3, 3] = self.comodin
                             elif place == 4:
                                 if self.size == "5x5":
                                     ## COMODIN EN LA FIGURA DE EN MEDIO ##
