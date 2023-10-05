@@ -24,6 +24,7 @@ class TableGenerator:
         self.double = "No"
         self.specificPosition = "No"
         self.withModel = "No"
+        self.manualFromFile = "No"
         self.mode = 0
         self.pdfSizeTable = (0, 0)
         self.outputDir = ""
@@ -56,6 +57,7 @@ class TableGenerator:
                     "4.2, 7.2",
                     "7, 10",
                     "5, 8",
+                    "6, 8.5",
                     "6.5, 9",
                     "3.4, 5.4",
                     "2.8, 4.8",
@@ -109,9 +111,19 @@ class TableGenerator:
                 tag="generateWithModel",
             )
             dpg.add_spacing(count=4)
+            self.manualFromFileButton = dpg.add_button(
+                label="Generar desde archivo",
+                callback=self.handleGenerateManual,
+                tag="manualFromFile"
+            )
             self.progressBar = dpg.add_progress_bar(
                 label="Progreso", default_value=self.progress, width=self.width
             )
+
+
+    def handleGenerateManual(self):
+        self.mode = 4
+        self.handleGenerate()
 
     def handleGenerateWithModel(self):
         self.mode = 3
@@ -150,6 +162,9 @@ class TableGenerator:
         if self.mode == 3:
             self.withModel = "Si"
             self.generateAutomatic()
+        if self.mode == 4:
+            self.manualFromFile = "Si"
+            self.generateAutomatic()
 
         w = float(dpg.get_value(self.widthTablePdfInput).strip().split(",")[0])
         h = float(dpg.get_value(self.widthTablePdfInput).strip().split(",")[1])
@@ -165,6 +180,7 @@ class TableGenerator:
             self.double,
             self.specificPosition,
             self.withModel,
+            self.manualFromFile
         )
 
         with dpg.window(label="Generador", width=300, height=220, pos=[self.width, 0]):
@@ -192,6 +208,7 @@ class TableGenerator:
             self.outputDir = get_file_path()
 
             for tabla in self.generator.tablas:
+                print(tabla)
                 # print("TABLA:   " + str(tabla) + "\n *********************")
                 # print(self.progress)
                 self.progress += step

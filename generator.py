@@ -14,6 +14,7 @@ class Generator:
         double="No",
         specificPosition="No",
         withModel="No",
+        manual="No"
     ):
         self.qty = qty
         self.size = size
@@ -22,6 +23,7 @@ class Generator:
         self.specificPosition = specificPosition
         self.tablas = []
         self.withModel = withModel
+        self.manual = manual
         self.generateTablas()
 
         ########### PRINT TABLES ############
@@ -36,6 +38,9 @@ class Generator:
         num_cols = int(size[1])
         # "4x4"
         # [4,4]
+        if self.manual == "Si":
+            self.tablas = self.getArrayFromFile()
+            return
 
         if self.withModel == "Si":
             if self.double != "Si" and self.specificPosition != "Si":
@@ -168,6 +173,30 @@ class Generator:
             matrices.append(matriz1)
             matrices.append(matriz2)
         self.tablas = matrices
+
+
+    def divide_chunks(self, l, n):
+        # looping till length l 
+        for i in range(0, len(l), n):  
+            yield l[i:i + n] 
+    
+
+    def getArrayFromFile(self, file_path="tables.txt"):
+        file = open(file_path, "r")
+        tables = []
+        size = 4
+        current_row = 0
+        lines = file.read()
+        rows = lines.split("\n")
+        
+        while "" in rows:
+            rows.remove("")
+            
+        rows = [[int(num) for num in s.split()] for s in rows]
+        tables = list(self.divide_chunks(rows, 4))
+        return tables
+
+
 
     # Uso de las funciones:
 
